@@ -1,0 +1,179 @@
+openapi: 3.0.3
+info:
+  title: SWAPI People — homework 2
+  version: 1.0.0
+  description: generate API test
+servers:
+  - url: https://swapi.py4e.com/api
+paths:
+  /people/:
+    get:
+      operationId: listPeople
+      summary: List or search people
+      parameters:
+        - name: search
+          in: query
+          description: find person
+          schema:
+            type: string
+          examples:
+            luke:
+              value: Luke
+            noMatch:
+              value: homework_no_person
+        - name: page
+          in: query
+          description: page number
+          schema:
+            type: integer
+            minimum: 1
+            default: 1
+          example: 1
+      responses:
+        '200':
+          description: A paginated collection, possibly empty.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PeoplePage'
+        '404':
+          description: Page not found.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiError'
+  /people/{id}/:
+    get:
+      operationId: getPerson
+      summary: Get one person by identifier
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: Unsigned decimal ID.
+          schema:
+            type: integer
+            format: int32
+            minimum: 0
+            default: 1
+          examples:
+            existing:
+              value: 1
+            missing:
+              value: 0
+      responses:
+        '200':
+          description: An existing person.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Person'
+        '404':
+          description: No person matches the identifier.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiError'
+components:
+  schemas:
+    Person:
+      type: object
+      required:
+        - name
+        - height
+        - mass
+        - hair_color
+        - skin_color
+        - eye_color
+        - birth_year
+        - gender
+        - homeworld
+        - url
+        - films
+        - species
+        - vehicles
+        - starships
+        - created
+        - edited
+      properties:
+        name:
+          type: string
+        height:
+          type: string
+        mass:
+          type: string
+        hair_color:
+          type: string
+        skin_color:
+          type: string
+        eye_color:
+          type: string
+        birth_year:
+          type: string
+        gender:
+          type: string
+        homeworld:
+          type: string
+          format: uri
+        url:
+          type: string
+          format: uri
+        films:
+          type: array
+          items:
+            type: string
+            format: uri
+        species:
+          type: array
+          items:
+            type: string
+            format: uri
+        vehicles:
+          type: array
+          items:
+            type: string
+            format: uri
+        starships:
+          type: array
+          items:
+            type: string
+            format: uri
+        created:
+          type: string
+          format: date-time
+        edited:
+          type: string
+          format: date-time
+    PeoplePage:
+      type: object
+      required:
+        - count
+        - next
+        - previous
+        - results
+      properties:
+        count:
+          type: integer
+          minimum: 0
+        next:
+          type: string
+          format: uri
+          nullable: true
+        previous:
+          type: string
+          format: uri
+          nullable: true
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/Person'
+    ApiError:
+      type: object
+      required:
+        - detail
+      properties:
+        detail:
+          type: string
+          minLength: 1
+      example:
+        detail: Not found

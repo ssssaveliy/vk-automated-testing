@@ -1,0 +1,16 @@
+.gradle/
+.kotlin/
+build/
+out/
+
+.idea/
+*.iml
+
+/tools/
+/process_data/
+
+/em.yaml
+
+generated/evomaster/**
+!generated/evomaster/**/
+!generated/evomaster/**/*.kt
